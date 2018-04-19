@@ -38,6 +38,11 @@ public class WebHookServiceImpl extends UnicastRemoteObject implements WebHookSe
                 callBacks.remove(personService);
             }
         }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -46,5 +51,10 @@ public class WebHookServiceImpl extends UnicastRemoteObject implements WebHookSe
     @Override
     public synchronized void setCallBackInterface(ClientUploadFileCallBack person) throws RemoteException {
         callBacks.add(person);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
