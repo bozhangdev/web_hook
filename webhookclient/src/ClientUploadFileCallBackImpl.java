@@ -16,12 +16,18 @@ public class ClientUploadFileCallBackImpl extends UnicastRemoteObject implements
     @Override
     public boolean upload(String fileName, byte[] fileContent) throws RemoteException {
         File file = new File(fileName);
+        String newFileName = fileName;
+        int count = 1;
         try {
-            if (!file.exists())
-                file.createNewFile();
+            while (file.exists()) {
+                newFileName = count + fileName;
+                count ++;
+                file = new File(newFileName);
+            }
+            file.createNewFile();
             BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
             os.write(fileContent);
-            System.out.println("New file downloaded from server: " + fileName);
+            System.out.println("New file downloaded from server: " + newFileName);
             return true;
         } catch (FileNotFoundException e) {
             System.out.println("File not found.\n");

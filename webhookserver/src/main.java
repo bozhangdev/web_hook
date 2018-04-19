@@ -27,13 +27,23 @@ public class main {
 
         while (true) {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Press 1 to upload a new file:");
-            int choice = scanner.nextInt();
+            System.out.println("Press 1 to upload a new file to clients:");
+            int choice = 0;
+            try {
+                choice = scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("Please input 1");
+                continue;
+            }
             if (choice == 1){
                 System.out.println("Please input the relative path of the file:");
                 Scanner scanner1 = new Scanner(System.in);
                 String file = scanner1.nextLine();
-                ((WebHookServiceImpl) webHookService).upload(file);
+                if (((WebHookServiceImpl) webHookService).upload(file)){
+                    System.out.println("This file has been sent to clients.\n");
+                }
+            }else {
+                System.out.println("Please input 1");
             }
         }
     }

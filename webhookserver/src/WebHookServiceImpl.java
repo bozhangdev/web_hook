@@ -14,18 +14,7 @@ public class WebHookServiceImpl extends UnicastRemoteObject implements WebHookSe
         // TODO Auto-generated constructor stub
     }
 
-    public boolean upload(String filename){
-        for (ClientUploadFileCallBack personService : callBacks) {
-            try {
-                boolean isUploaded = personService.upload(filename, fileToByte(filename));
-            } catch (RemoteException e) {
-                System.out.println("Client is disconnected\n");
-            }
-        }
-        return true;
-    }
-
-    private byte[] fileToByte(String filename){
+    public synchronized boolean upload(String filename){
         byte[] b = null;
         try {
             File file = new File(filename);
@@ -35,15 +24,27 @@ public class WebHookServiceImpl extends UnicastRemoteObject implements WebHookSe
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             System.out.println("No such file");
+            return false;
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println("IO Error.");
+            return false;
         }
-        return b;
+        for (ClientUploadFileCallBack personService : callBacks) {
+            try {
+                personService.upload(filename, b);
+            } catch (RemoteException e) {
+                System.out.println("An client is disconnected\n");
+                callBacks.remove(personService);
+            }
+        }
+        return true;
     }
 
+
+
     @Override
-    public void setCallBackInterface(ClientUploadFileCallBack person) throws RemoteException {
+    public synchronized void setCallBackInterface(ClientUploadFileCallBack person) throws RemoteException {
         callBacks.add(person);
     }
 }
